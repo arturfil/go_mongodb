@@ -1,0 +1,36 @@
+// ::::::::::::NOTE::::::::::::::::::::
+// ::::::::create pool:::::::::::::::::
+
+import (
+    "context"
+    "log"
+
+    "go.mongodb.org/mongo-driver/mongo"
+    "go.mongodb.org/mongo-driver/mongo/options"
+)
+
+func main() {
+    // Create a new MongoDB client.
+    client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Set the maxPoolSize option to limit the number of connections in the pool.
+    client.SetOptions(options.Client().SetMaxPoolSize(100))
+
+    // Connect to the MongoDB database.
+    err = client.Connect(context.TODO())
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Use the client to perform operations on the database.
+    // ...
+
+    // Close the client when you are finished.
+    err = client.Disconnect(context.TODO())
+    if err != nil {
+        log.Fatal(err)
+    }
+}
