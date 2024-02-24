@@ -1,10 +1,8 @@
 package handler
 
 import (
-	"net/http"
-
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
@@ -14,7 +12,7 @@ type Response struct {
     Code int
 }
 
-func CreateRouter() http.Handler {
+func CreateRouter() *chi.Mux {
 
 	router := chi.NewRouter()
 
@@ -29,10 +27,16 @@ func CreateRouter() http.Handler {
 		MaxAge:           300,
 	}))
 
-	router.Get("/healthcheck", HealthCheck)
 
-	router.Get("/todos", GetTodos)
-	router.Post("/todos/create", CreateTodo)
+    router.Route("/api", func(router chi.Router) {
+        router.Get("/healthcheck", HealthCheck)
+
+        router.Get("/todos", GetTodos)
+        router.Get("/todos/{id}", GetTodoById)
+        router.Post("/todos/create", CreateTodo)
+        // router.Post("/todos/update/{id}", UpdateTodo)
+        // router.Delete("/todos/delete/{id}", DeleteTodo)
+    })
 
 	return router
 }

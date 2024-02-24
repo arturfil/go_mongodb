@@ -1,18 +1,17 @@
 package handler
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"todo_mongo/service"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/go-chi/chi/v5"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var client *mongo.Client
+var collection *mongo.Collection
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	res := Response{
@@ -31,25 +30,36 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 // GetTodos - Returns all the todos
 func GetTodos(w http.ResponseWriter, r *http.Request) {
-	collection := client.Database("todosdb").Collection("todos")
+    var todo service.Todo
 
-	var todos []service.Todo
-	cursor, err := collection.Find(context.Background(), bson.D{})
-	if err != nil {
-	    log.Fatal(err)
-	}
+    w.Header().Set("Content-Type", "application/json")
 
-	defer cursor.Close(context.Background())
+    todos, err := todo.GetAllTodos()
+    if err != nil {
+        log.Println(err)
+        return 
+    }
 
-	for cursor.Next(context.Background()) {
-	    var todo service.Todo
-	    cursor.Decode(&todo)
-	    todos = append(todos, todo)
-	}
+    json.NewEncoder(w).Encode(todos)
+}
 
-    fmt.Println("TODOS", todos)
+func GetTodoById(w http.ResponseWriter, r *http.Request) {
+    var todo service.Todo
 
-	json.NewEncoder(w).Encode(todos)
+    id := chi.URLParam(r, "id")
+    fmt.Println("ID -> ", id)
+
+    w.Header().Set("Content-Type", "application/json")
+
+    todo, err := todo.GetTodoById(id)
+    if err != nil {
+        log.Println(err)
+        return
+    }
+
+    fmt.Println(todo)
+
+    json.NewEncoder(w).Encode(todo)
 }
 
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
