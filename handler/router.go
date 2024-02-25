@@ -34,8 +34,8 @@ func CreateRouter() *chi.Mux {
         router.Get("/todos", GetTodos)
         router.Get("/todos/{id}", GetTodoById)
         router.Post("/todos/create", CreateTodo)
-        // router.Post("/todos/update/{id}", UpdateTodo)
-        // router.Delete("/todos/delete/{id}", DeleteTodo)
+        router.Put("/todos/update/{id}", UpdateTodo)
+        router.Delete("/todos/delete/{id}", DeleteTodo)
     })
 
 	return router

@@ -28,7 +28,7 @@ type Todo struct {
 }
 
 func returnCollectionPointer() *mongo.Collection {
-    return client.Database("todosdb").Collection("todos")
+	return client.Database("todosdb").Collection("todos")
 }
 
 func (t *Todo) GetAllTodos() ([]Todo, error) {
@@ -52,18 +52,22 @@ func (t *Todo) GetAllTodos() ([]Todo, error) {
 	return todos, nil
 }
 
-func (t *Todo) GetTodoById(id string) (Todo, error){
-    collection := returnCollectionPointer()
-    var todo Todo
+func (t *Todo) GetTodoById(id string) (Todo, error) {
+	collection := returnCollectionPointer()
+	var todo Todo
 
-    mongoID, err := primitive.ObjectIDFromHex(id)
+	mongoID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Println(err)
+		return Todo{}, err
+	}
 
-    err = collection.FindOne(context.Background(), bson.M{"_id": mongoID}).Decode(&todo)
-    if err != nil {
-        return Todo{}, err
-    }
+	err = collection.FindOne(context.Background(), bson.M{"_id": mongoID}).Decode(&todo)
+	if err != nil {
+		return Todo{}, err
+	}
 
-    return todo, nil
+	return todo, nil
 
 }
 
@@ -83,10 +87,50 @@ func (t *Todo) InsertTodo(entry Todo) error {
 	return nil
 }
 
-func (t *Todo) UpdateTodo() {
+func (t *Todo) UpdateTodo(todo Todo) (*mongo.UpdateResult, error) {
+	collection := returnCollectionPointer()
+	mongoID, err := primitive.ObjectIDFromHex(todo.ID)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
 
+    // Create an update struct 
+    update := bson.D{
+        {"$set", bson.D{
+            {"task", todo.Task},
+            {"completed", todo.Completed},
+            {"updated_at", time.Now()},
+        }},
+    }
+
+    res, err := collection.UpdateOne(
+		context.Background(),
+		bson.M{"_id": mongoID}, // filter by
+		update,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
-func (t *Todo) DeleteTodo() {
+func (t *Todo) DeleteTodo(id string) error {
+	collection := returnCollectionPointer()
+	mongoID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
 
+    _, err = collection.DeleteOne(
+		context.Background(),
+		bson.M{"_id": mongoID},
+	)
+    if err != nil {
+        return err
+    }
+
+	return nil
 }
