@@ -31,6 +31,7 @@ func returnCollectionPointer() *mongo.Collection {
 	return client.Database("todosdb").Collection("todos")
 }
 
+// GetAllTodos - returns all todo objs
 func (t *Todo) GetAllTodos() ([]Todo, error) {
 	collection := returnCollectionPointer()
 	var todos []Todo
@@ -52,6 +53,7 @@ func (t *Todo) GetAllTodos() ([]Todo, error) {
 	return todos, nil
 }
 
+// GetTodoById - returns a single todo given that an id is provided
 func (t *Todo) GetTodoById(id string) (Todo, error) {
 	collection := returnCollectionPointer()
 	var todo Todo
@@ -71,6 +73,7 @@ func (t *Todo) GetTodoById(id string) (Todo, error) {
 
 }
 
+// InsertTodo - inserts a new obj in the db
 func (t *Todo) InsertTodo(entry Todo) error {
 	collection := client.Database("todosdb").Collection("todos")
 
@@ -87,6 +90,7 @@ func (t *Todo) InsertTodo(entry Todo) error {
 	return nil
 }
 
+// UpdateTodo - updates a todo usaing the UpdateOne method
 func (t *Todo) UpdateTodo(todo Todo) (*mongo.UpdateResult, error) {
 	collection := returnCollectionPointer()
 	mongoID, err := primitive.ObjectIDFromHex(todo.ID)
@@ -116,6 +120,7 @@ func (t *Todo) UpdateTodo(todo Todo) (*mongo.UpdateResult, error) {
 	return res, nil
 }
 
+// DeleteTodo - deletes a todo form the db and returns no content 204
 func (t *Todo) DeleteTodo(id string) error {
 	collection := returnCollectionPointer()
 	mongoID, err := primitive.ObjectIDFromHex(id)
