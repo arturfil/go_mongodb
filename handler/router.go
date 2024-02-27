@@ -6,17 +6,16 @@ import (
 	"github.com/go-chi/cors"
 )
 
-
 type Response struct {
-    Msg  string
-    Code int
+	Msg  string
+	Code int
 }
 
 func CreateRouter() *chi.Mux {
 
 	router := chi.NewRouter()
 
-    router.Use(middleware.Logger)
+	router.Use(middleware.Logger)
 
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
@@ -27,16 +26,15 @@ func CreateRouter() *chi.Mux {
 		MaxAge:           300,
 	}))
 
+	router.Route("/api", func(router chi.Router) {
+		router.Get("/healthcheck", HealthCheck)
 
-    router.Route("/api", func(router chi.Router) {
-        router.Get("/healthcheck", HealthCheck)
-
-        router.Get("/todos", GetTodos)
-        router.Get("/todos/{id}", GetTodoById)
-        router.Post("/todos/create", CreateTodo)
-        router.Put("/todos/update/{id}", UpdateTodo)
-        router.Delete("/todos/delete/{id}", DeleteTodo)
-    })
+		router.Get("/todos", GetTodos)
+		router.Get("/todos/{id}", GetTodoById)
+		router.Post("/todos/create", CreateTodo)
+		router.Put("/todos/update/{id}", UpdateTodo)
+		router.Delete("/todos/delete/{id}", DeleteTodo)
+	})
 
 	return router
 }

@@ -32,51 +32,51 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
 // GetTodos - Returns all the todos
 func GetTodos(w http.ResponseWriter, r *http.Request) {
-    todos, err := todo.GetAllTodos()
-    if err != nil {
-        log.Println(err)
-        return 
-    }
+	todos, err := todo.GetAllTodos()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(todos)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(todos)
 }
 
-// GetTodoById - returns the todo, provided an id 
+// GetTodoById - returns the todo, provided an id
 func GetTodoById(w http.ResponseWriter, r *http.Request) {
-    id := chi.URLParam(r, "id")
+	id := chi.URLParam(r, "id")
 
-    todo, err := todo.GetTodoById(id)
-    if err != nil {
-        log.Println(err)
-        return
-    }
+	todo, err := todo.GetTodoById(id)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-    fmt.Println(todo)
+	fmt.Println(todo)
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(todo)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(todo)
 }
 
 // CreateTodo - Inserts a Todo obect in the db
 func CreateTodo(w http.ResponseWriter, r *http.Request) {
-    err := json.NewDecoder(r.Body).Decode(&todo)
-    if err != nil {
-        log.Fatal("error", err) 
-    }
+	err := json.NewDecoder(r.Body).Decode(&todo)
+	if err != nil {
+		log.Fatal("error", err)
+	}
 
-    fmt.Println(todo)
+	fmt.Println(todo)
 
-    err = todo.InsertTodo(todo)
-    if err != nil {
-        errorRes := Response{
-            Msg: "Error",
-            Code: 304,
-        }
-        json.NewEncoder(w).Encode(errorRes)
-        return 
-    }
-   
+	err = todo.InsertTodo(todo)
+	if err != nil {
+		errorRes := Response{
+			Msg:  "Error",
+			Code: 304,
+		}
+		json.NewEncoder(w).Encode(errorRes)
+		return
+	}
+
 	res := Response{
 		Msg:  "Success",
 		Code: http.StatusOK,
@@ -94,18 +94,18 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
 
 // UpdateTodo - udpates a preexisting todo
 func UpdateTodo(w http.ResponseWriter, r *http.Request) {
-    err := json.NewDecoder(r.Body).Decode(&todo)
-    if err != nil {
-        log.Println(err)
-        return 
-    }
-    
-    _, err = todo.UpdateTodo(todo)
+	err := json.NewDecoder(r.Body).Decode(&todo)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-    res := Response{
-        Msg: "Successfully Updated",
-        Code: 202,
-    }
+	_, err = todo.UpdateTodo(todo)
+
+	res := Response{
+		Msg:  "Successfully Updated",
+		Code: 202,
+	}
 
 	jsonStr, err := json.Marshal(res)
 	if err != nil {
@@ -113,24 +113,24 @@ func UpdateTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(res.Code)
+	w.WriteHeader(res.Code)
 	w.Write(jsonStr)
 }
 
 // DeleteTodo - deletes the todo from the db
 func DeleteTodo(w http.ResponseWriter, r *http.Request) {
-    id := chi.URLParam(r, "id")
+	id := chi.URLParam(r, "id")
 
-    err := todo.DeleteTodo(id)
-    if err != nil {
-        log.Println(err)
-        return 
-    }
+	err := todo.DeleteTodo(id)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-    res := Response{
-        Msg: "Successfully Deleted",
-        Code: 204,
-    }
+	res := Response{
+		Msg:  "Successfully Deleted",
+		Code: 204,
+	}
 
 	jsonStr, err := json.Marshal(res)
 	if err != nil {
@@ -138,8 +138,8 @@ func DeleteTodo(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-    w.WriteHeader(res.Code)
-    // redundant, 204: successful deletion with no content
+	w.WriteHeader(res.Code)
+	// redundant, 204: successful deletion with no content
 	w.Write(jsonStr)
 
 }

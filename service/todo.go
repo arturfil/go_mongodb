@@ -100,16 +100,16 @@ func (t *Todo) UpdateTodo(todo Todo) (*mongo.UpdateResult, error) {
 		return nil, err
 	}
 
-    // Create an update struct 
-    update := bson.D{
-        {"$set", bson.D{
-            {"task", todo.Task},
-            {"completed", todo.Completed},
-            {"updated_at", time.Now()},
-        }},
-    }
+	// Create an update struct
+	update := bson.D{
+		{"$set", bson.D{
+			{"task", todo.Task},
+			{"completed", todo.Completed},
+			{"updated_at", time.Now()},
+		}},
+	}
 
-    res, err := collection.UpdateOne(
+	res, err := collection.UpdateOne(
 		context.Background(),
 		bson.M{"_id": mongoID}, // filter by
 		update,
@@ -130,13 +130,13 @@ func (t *Todo) DeleteTodo(id string) error {
 		return err
 	}
 
-    _, err = collection.DeleteOne(
+	_, err = collection.DeleteOne(
 		context.Background(),
 		bson.M{"_id": mongoID},
 	)
-    if err != nil {
-        return err
-    }
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
