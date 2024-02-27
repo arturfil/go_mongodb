@@ -65,6 +65,8 @@ func CreateTodo(w http.ResponseWriter, r *http.Request) {
         log.Fatal("error", err) 
     }
 
+    fmt.Println(todo)
+
     err = todo.InsertTodo(todo)
     if err != nil {
         errorRes := Response{

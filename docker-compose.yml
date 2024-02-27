@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+
+  todo_mongo_db:
+    image: "mongo:4.2.16-bionic"
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGO_DB}
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_DB_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_DB_PASSWORD}
+    ports:
+      - "27017:27017"
+    # volumes:
+    #   - ./db-data/mongo/:/data/db
+
+
