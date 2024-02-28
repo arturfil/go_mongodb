@@ -3,6 +3,7 @@ version: '3'
 services:
 
   todo_mongo_db:
+    container_name: ${DOCKER_CONTAINER_DB_NAME}
     image: "mongo:4.2.16-bionic"
     environment:
       - MONGO_INITDB_DATABASE=${MONGO_DB}
